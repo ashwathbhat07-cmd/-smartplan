@@ -6,6 +6,7 @@ import { getDestinationById, formatBudget } from "@/lib/engine/budget-engine";
 import { ItineraryView } from "@/components/trip/itinerary-view";
 import { ExpenseTracker } from "@/components/trip/expense-tracker";
 import { DestinationMap } from "@/components/map/destination-map";
+import { BudgetOptions } from "@/components/trip/budget-options";
 import type { GeneratedItinerary } from "@/lib/ai/gemini";
 import Link from "next/link";
 
@@ -188,6 +189,14 @@ export default function DestinationDetailPage() {
           />
           <ExpenseTracker budget={budget} />
         </div>
+
+        {/* Budget Options (if over budget) */}
+        <BudgetOptions
+          destination={dest}
+          budget={budget}
+          duration={duration}
+          vibes={vibes}
+        />
 
         {/* Generate Itinerary */}
         {!itinerary && (
