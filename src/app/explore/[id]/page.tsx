@@ -7,6 +7,8 @@ import { ItineraryView } from "@/components/trip/itinerary-view";
 import { ExpenseTracker } from "@/components/trip/expense-tracker";
 import { DestinationMap } from "@/components/map/destination-map";
 import { BudgetOptions } from "@/components/trip/budget-options";
+import { WeatherWidget } from "@/components/trip/weather-widget";
+import { PackingList } from "@/components/trip/packing-list";
 import type { GeneratedItinerary } from "@/lib/ai/gemini";
 import Link from "next/link";
 
@@ -178,6 +180,15 @@ export default function DestinationDetailPage() {
           </div>
         </div>
 
+        {/* Weather */}
+        <div className="mb-8">
+          <WeatherWidget
+            lat={dest.latitude}
+            lng={dest.longitude}
+            destinationName={dest.name}
+          />
+        </div>
+
         {/* Map & Expenses */}
         <div className="grid sm:grid-cols-2 gap-6 mb-8">
           <DestinationMap
@@ -187,7 +198,15 @@ export default function DestinationDetailPage() {
             zoom={10}
             className="w-full h-[300px]"
           />
-          <ExpenseTracker budget={budget} />
+          <div className="space-y-6">
+            <ExpenseTracker budget={budget} />
+            <PackingList
+              destination={dest.name}
+              country={dest.country}
+              duration={duration}
+              vibes={vibes}
+            />
+          </div>
         </div>
 
         {/* Budget Options (if over budget) */}

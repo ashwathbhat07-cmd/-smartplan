@@ -56,6 +56,12 @@ export function Navbar() {
               >
                 Dashboard
               </Link>
+              <Link
+                href="/compare"
+                className="text-sm text-zinc-400 hover:text-white transition-colors"
+              >
+                Compare
+              </Link>
               <div className="flex items-center gap-3">
                 {user.user_metadata?.avatar_url && (
                   <img
