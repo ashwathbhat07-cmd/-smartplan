@@ -4,6 +4,8 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useState, useMemo } from "react";
 import { getDestinationById, formatBudget } from "@/lib/engine/budget-engine";
 import { ItineraryView } from "@/components/trip/itinerary-view";
+import { ExpenseTracker } from "@/components/trip/expense-tracker";
+import { DestinationMap } from "@/components/map/destination-map";
 import type { GeneratedItinerary } from "@/lib/ai/gemini";
 import Link from "next/link";
 
@@ -173,6 +175,18 @@ export default function DestinationDetailPage() {
               ))}
             </ul>
           </div>
+        </div>
+
+        {/* Map & Expenses */}
+        <div className="grid sm:grid-cols-2 gap-6 mb-8">
+          <DestinationMap
+            destinations={[dest]}
+            selectedId={dest.id}
+            center={[dest.longitude, dest.latitude]}
+            zoom={10}
+            className="w-full h-[300px]"
+          />
+          <ExpenseTracker budget={budget} />
         </div>
 
         {/* Generate Itinerary */}

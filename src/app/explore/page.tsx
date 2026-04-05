@@ -4,12 +4,14 @@ import { useSearchParams } from "next/navigation";
 import { useMemo, useState, Suspense } from "react";
 import { findDestinations, formatBudget } from "@/lib/engine/budget-engine";
 import { DestinationCard } from "@/components/trip/destination-card";
+import { DestinationMap } from "@/components/map/destination-map";
 import type { OnboardingData, Vibe } from "@/types";
 import Link from "next/link";
 
 function ExploreContent() {
   const searchParams = useSearchParams();
   const [sortBy, setSortBy] = useState<"score" | "price-low" | "price-high">("score");
+  const [showMap, setShowMap] = useState(true);
 
   const preferences: OnboardingData = useMemo(
     () => ({
@@ -96,6 +98,24 @@ function ExploreContent() {
             </div>
           </div>
         </div>
+
+        {/* Map Toggle + Map */}
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => setShowMap(!showMap)}
+            className="px-4 py-2 text-sm bg-zinc-800/50 border border-zinc-700/50 rounded-lg text-zinc-300 hover:border-zinc-500 transition-all"
+          >
+            {showMap ? "Hide Map" : "Show Map"} 🗺️
+          </button>
+        </div>
+        {showMap && results.length > 0 && (
+          <div className="mb-8">
+            <DestinationMap
+              destinations={results.map((r) => r.destination)}
+              className="w-full h-[400px]"
+            />
+          </div>
+        )}
 
         {/* Results Grid */}
         {results.length > 0 ? (
