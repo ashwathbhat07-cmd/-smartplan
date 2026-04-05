@@ -2,6 +2,7 @@
 
 import type { MatchResult } from "@/lib/engine/budget-engine";
 import { formatBudget } from "@/lib/engine/budget-engine";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 const budgetFitColors = {
@@ -26,6 +27,8 @@ const scoreGradient = (score: number) => {
 export function DestinationCard({ result }: { result: MatchResult }) {
   const { destination: dest, score, breakdown, estimatedTotal, budgetFit } = result;
   const fit = budgetFitColors[budgetFit];
+  const searchParams = useSearchParams();
+  const detailParams = searchParams.toString();
 
   return (
     <div className="group relative bg-zinc-900/50 border border-zinc-800/50 rounded-2xl overflow-hidden hover:border-zinc-700/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20">
@@ -119,7 +122,7 @@ export function DestinationCard({ result }: { result: MatchResult }) {
 
         {/* CTA */}
         <Link
-          href={`/explore/${dest.id}`}
+          href={`/explore/${dest.id}${detailParams ? `?${detailParams}` : ""}`}
           className="block w-full text-center py-2.5 rounded-xl bg-indigo-600/10 text-indigo-400 text-sm font-medium border border-indigo-500/20 hover:bg-indigo-600/20 hover:border-indigo-500/40 transition-all duration-200"
         >
           View Details & Plan Trip
