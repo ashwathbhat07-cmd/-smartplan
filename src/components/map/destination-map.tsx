@@ -31,7 +31,6 @@ function MapInner({
     if (!containerRef.current) return;
 
     const L = require("leaflet");
-    require("leaflet/dist/leaflet.css");
 
     // Init map
     if (!mapRef.current) {
