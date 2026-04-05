@@ -6,7 +6,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { destination, country, budget, duration, vibe, travelers } = body;
 
-    if (!destination || !budget || !duration || !vibe) {
+    if (!destination || !country || !budget || !duration || !vibe) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
 
     const itinerary = await generateItinerary({
       destination,
-      country: country || "India",
+      country,
       budget: Number(budget),
       duration: Number(duration),
       vibe,

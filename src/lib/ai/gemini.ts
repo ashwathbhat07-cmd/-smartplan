@@ -91,6 +91,10 @@ RESPOND IN THIS EXACT JSON FORMAT (no markdown, no code blocks, just raw JSON):
     cleaned = cleaned.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
   }
 
-  const parsed: GeneratedItinerary = JSON.parse(cleaned);
-  return parsed;
+  try {
+    const parsed: GeneratedItinerary = JSON.parse(cleaned);
+    return parsed;
+  } catch {
+    throw new Error("Failed to parse AI response. Please try again.");
+  }
 }

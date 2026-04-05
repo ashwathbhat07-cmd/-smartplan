@@ -60,7 +60,7 @@ export function Navbar() {
                 {user.user_metadata?.avatar_url && (
                   <img
                     src={user.user_metadata.avatar_url}
-                    alt=""
+                    alt={user.user_metadata?.full_name || "User avatar"}
                     className="w-8 h-8 rounded-full ring-2 ring-zinc-700"
                   />
                 )}
