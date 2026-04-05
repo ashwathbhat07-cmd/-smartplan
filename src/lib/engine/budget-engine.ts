@@ -18,7 +18,7 @@ export interface MatchResult {
  * Scores destinations 0-100 based on budget fit, vibe match, and seasonality.
  */
 export function findDestinations(preferences: OnboardingData): MatchResult[] {
-  const { budget, duration, vibe, startDate, region } = preferences;
+  const { budget, duration, vibes, startDate, region } = preferences;
 
   // Filter by region first
   let pool = destinations;
@@ -31,7 +31,10 @@ export function findDestinations(preferences: OnboardingData): MatchResult[] {
     .map((dest) => {
       const estimatedTotal = dest.avg_daily_cost * duration;
       const budgetScore = calculateBudgetScore(budget, estimatedTotal, dest);
-      const vibeScore = calculateVibeScore(vibe, dest.vibes);
+      // Score against all selected vibes, take the best match
+      const vibeScore = Math.max(
+        ...vibes.map((v) => calculateVibeScore(v, dest.vibes))
+      );
       const seasonScore = calculateSeasonScore(startDate, dest.best_months);
 
       // Weighted total: budget matters most (50%), vibe (30%), season (20%)

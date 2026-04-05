@@ -70,7 +70,7 @@ export interface ItineraryActivity {
 export interface OnboardingData {
   budget: number;
   duration: number;
-  vibe: Vibe;
+  vibes: Vibe[];
   startDate: string | null;
   travelers: number;
   region: "domestic" | "international" | "both";

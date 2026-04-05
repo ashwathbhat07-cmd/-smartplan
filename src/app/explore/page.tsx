@@ -17,7 +17,7 @@ function ExploreContent() {
     () => ({
       budget: parseInt(searchParams.get("budget") || "15000"),
       duration: parseInt(searchParams.get("duration") || "3"),
-      vibe: (searchParams.get("vibe") || "adventure") as Vibe,
+      vibes: (searchParams.get("vibes") || "adventure").split(",") as Vibe[],
       startDate: searchParams.get("startDate") || null,
       travelers: parseInt(searchParams.get("travelers") || "1"),
       region: (searchParams.get("region") || "both") as OnboardingData["region"],
@@ -49,7 +49,7 @@ function ExploreContent() {
               budget for{" "}
               <span className="text-teal-400">{preferences.duration} days</span>{" "}
               of{" "}
-              <span className="text-amber-400 capitalize">{preferences.vibe}</span>
+              <span className="text-amber-400 capitalize">{preferences.vibes.join(", ")}</span>
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -88,7 +88,7 @@ function ExploreContent() {
           <div className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50">
             <div className="text-xs text-zinc-500 mb-1">Vibe</div>
             <div className="text-lg font-bold text-amber-400 capitalize">
-              {preferences.vibe}
+              {preferences.vibes.join(", ")}
             </div>
           </div>
           <div className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50">

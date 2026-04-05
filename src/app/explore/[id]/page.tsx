@@ -16,7 +16,7 @@ export default function DestinationDetailPage() {
 
   const budget = parseInt(searchParams.get("budget") || "15000");
   const duration = parseInt(searchParams.get("duration") || "3");
-  const vibe = searchParams.get("vibe") || "adventure";
+  const vibes = (searchParams.get("vibes") || "adventure").split(",");
   const travelers = parseInt(searchParams.get("travelers") || "1");
 
   const [itinerary, setItinerary] = useState<GeneratedItinerary | null>(null);
@@ -51,7 +51,7 @@ export default function DestinationDetailPage() {
           country: dest.country,
           budget,
           duration,
-          vibe,
+          vibe: vibes.join(", "),
           travelers,
         }),
       });
@@ -151,7 +151,7 @@ export default function DestinationDetailPage() {
                 <span
                   key={v}
                   className={`px-3 py-1 rounded-lg text-sm capitalize ${
-                    v === vibe
+                    vibes.includes(v)
                       ? "bg-indigo-600/20 text-indigo-400 border border-indigo-500/30"
                       : "bg-zinc-800/80 text-zinc-400"
                   }`}

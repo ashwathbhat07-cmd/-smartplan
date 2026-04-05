@@ -32,7 +32,7 @@ export function Onboarding() {
   const [data, setData] = useState<OnboardingData>({
     budget: 15000,
     duration: 3,
-    vibe: "adventure",
+    vibes: ["adventure"],
     startDate: null,
     travelers: 1,
     region: "both",
@@ -40,11 +40,25 @@ export function Onboarding() {
 
   const totalSteps = 4;
 
+  const toggleVibe = (vibe: Vibe) => {
+    setData((prev) => {
+      const has = prev.vibes.includes(vibe);
+      if (has) {
+        // Don't allow empty — keep at least one
+        if (prev.vibes.length === 1) return prev;
+        return { ...prev, vibes: prev.vibes.filter((v) => v !== vibe) };
+      }
+      // Max 3 vibes
+      if (prev.vibes.length >= 3) return prev;
+      return { ...prev, vibes: [...prev.vibes, vibe] };
+    });
+  };
+
   const handleSubmit = () => {
     const params = new URLSearchParams({
       budget: data.budget.toString(),
       duration: data.duration.toString(),
-      vibe: data.vibe,
+      vibes: data.vibes.join(","),
       travelers: data.travelers.toString(),
       region: data.region,
       ...(data.startDate && { startDate: data.startDate }),
@@ -124,32 +138,47 @@ export function Onboarding() {
           </div>
         )}
 
-        {/* Step 2: Vibe */}
+        {/* Step 2: Vibe (multi-select, max 3) */}
         {step === 2 && (
           <div className="animate-fade-in-up">
             <h2 className="text-2xl font-bold mb-2">
-              Pick your <span className="gradient-text">vibe</span>
+              Pick your <span className="gradient-text">vibes</span>
             </h2>
             <p className="text-zinc-400 mb-8">
-              What kind of trip are you looking for?
+              Choose up to 3 vibes that match your trip.
+              <span className="text-indigo-400 ml-1">
+                ({data.vibes.length}/3 selected)
+              </span>
             </p>
 
             <div className="grid grid-cols-2 gap-3">
-              {vibeOptions.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => setData({ ...data, vibe: opt.value })}
-                  className={`p-4 rounded-xl text-left transition-all duration-200 border ${
-                    data.vibe === opt.value
-                      ? "bg-indigo-600/10 border-indigo-500/50 shadow-lg shadow-indigo-500/10"
-                      : "bg-zinc-800/30 border-zinc-700/50 hover:border-zinc-600"
-                  }`}
-                >
-                  <div className="text-2xl mb-1">{opt.emoji}</div>
-                  <div className="font-semibold text-sm">{opt.label}</div>
-                  <div className="text-xs text-zinc-500">{opt.desc}</div>
-                </button>
-              ))}
+              {vibeOptions.map((opt) => {
+                const isSelected = data.vibes.includes(opt.value);
+                const isMaxed = data.vibes.length >= 3 && !isSelected;
+                return (
+                  <button
+                    key={opt.value}
+                    onClick={() => toggleVibe(opt.value)}
+                    disabled={isMaxed}
+                    className={`p-4 rounded-xl text-left transition-all duration-200 border relative ${
+                      isSelected
+                        ? "bg-indigo-600/10 border-indigo-500/50 shadow-lg shadow-indigo-500/10"
+                        : isMaxed
+                          ? "bg-zinc-800/20 border-zinc-800/30 opacity-40 cursor-not-allowed"
+                          : "bg-zinc-800/30 border-zinc-700/50 hover:border-zinc-600"
+                    }`}
+                  >
+                    {isSelected && (
+                      <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs">
+                        ✓
+                      </div>
+                    )}
+                    <div className="text-2xl mb-1">{opt.emoji}</div>
+                    <div className="font-semibold text-sm">{opt.label}</div>
+                    <div className="text-xs text-zinc-500">{opt.desc}</div>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
