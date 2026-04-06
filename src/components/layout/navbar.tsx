@@ -63,6 +63,12 @@ export function Navbar() {
                 Compare
               </Link>
               <Link
+                href="/groups"
+                className="text-sm text-zinc-400 hover:text-white transition-colors"
+              >
+                Groups
+              </Link>
+              <Link
                 href="/surprise"
                 className="text-sm text-zinc-400 hover:text-white transition-colors"
               >

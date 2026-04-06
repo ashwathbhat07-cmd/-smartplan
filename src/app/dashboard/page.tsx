@@ -271,16 +271,16 @@ export default async function Dashboard() {
               Let SmartPlan pick the perfect destination for you
             </p>
           </Link>
-          <div className="p-5 rounded-xl border border-zinc-800/50 bg-zinc-900/30">
+          <Link
+            href="/groups"
+            className="p-5 rounded-xl border border-zinc-800/50 bg-zinc-900/30 hover:bg-zinc-900/60 hover:border-zinc-700/50 transition-all group"
+          >
             <div className="text-2xl mb-2">👥</div>
-            <h3 className="font-semibold mb-1">Group Trips</h3>
-            <p className="text-xs text-zinc-500 mb-2">
+            <h3 className="font-semibold mb-1 group-hover:text-indigo-400 transition-colors">Group Trips</h3>
+            <p className="text-xs text-zinc-500">
               Plan together, vote on destinations, split costs
             </p>
-            <span className="inline-block px-2.5 py-0.5 text-xs font-medium text-amber-400 bg-amber-500/10 rounded-full border border-amber-500/20">
-              Coming Soon
-            </span>
-          </div>
+          </Link>
         </div>
       </div>
     </div>
