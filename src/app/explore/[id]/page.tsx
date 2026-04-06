@@ -18,6 +18,7 @@ import { PlanB } from "@/components/trip/plan-b";
 import { SOSButton } from "@/components/trip/sos-button";
 import { BookingLinks } from "@/components/trip/booking-links";
 import { LuggageCalculator } from "@/components/trip/luggage-calculator";
+import { CheaperDays } from "@/components/trip/cheaper-days";
 import { BestTimeCalendar } from "@/components/trip/best-time-calendar";
 import { DocumentChecklist } from "@/components/trip/document-checklist";
 import { ValueAssessment } from "@/components/trip/value-assessment";
@@ -438,6 +439,7 @@ export default function DestinationDetailPage() {
                 <div className="text-xs text-zinc-500">Best Season</div>
               </div>
             </div>
+            <CheaperDays destination={dest} />
             <PlanB destination={dest} budget={budget} duration={duration} />
           </div>
         )}
