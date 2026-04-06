@@ -25,6 +25,10 @@ export const metadata: Metadata = {
     "trip planning",
     "group travel",
   ],
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

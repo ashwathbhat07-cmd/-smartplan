@@ -30,6 +30,10 @@ export function DestinationCard({ result }: { result: MatchResult }) {
   const searchParams = useSearchParams();
   const detailParams = searchParams.toString();
 
+  // Popular this month check
+  const currentMonth = new Date().getMonth() + 1;
+  const isPopular = dest.best_months.includes(currentMonth);
+
   return (
     <div className="group relative bg-zinc-900/50 border border-zinc-800/50 rounded-2xl overflow-hidden hover:border-zinc-700/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20">
       {/* Image */}
@@ -51,9 +55,16 @@ export function DestinationCard({ result }: { result: MatchResult }) {
           </span>
         </div>
 
-        {/* Region Badge */}
-        <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-zinc-900/80 backdrop-blur-sm text-xs font-medium text-zinc-300 border border-zinc-700/50">
-          {dest.region === "domestic" ? "🇮🇳 India" : "🌍 International"}
+        {/* Region Badge + Popular */}
+        <div className="absolute top-3 left-3 flex gap-1.5">
+          <span className="px-2.5 py-1 rounded-md bg-zinc-900/80 backdrop-blur-sm text-xs font-medium text-zinc-300 border border-zinc-700/50">
+            {dest.region === "domestic" ? "🇮🇳 India" : "🌍 International"}
+          </span>
+          {isPopular && (
+            <span className="px-2 py-1 rounded-md bg-amber-500/20 backdrop-blur-sm text-xs font-semibold text-amber-300 border border-amber-500/30">
+              🔥 Popular
+            </span>
+          )}
         </div>
 
         {/* Budget Fit */}
