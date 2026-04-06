@@ -98,7 +98,7 @@ export function Onboarding() {
 
         {/* Step 1: Budget */}
         {step === 1 && (
-          <div className="animate-fade-in-up">
+          <div className="animate-slide-in-right">
             <h2 className="text-2xl font-bold mb-2">
               What&apos;s your <span className="gradient-text">budget</span>?
             </h2>
@@ -152,7 +152,7 @@ export function Onboarding() {
 
         {/* Step 2: Vibe (multi-select, max 3) */}
         {step === 2 && (
-          <div className="animate-fade-in-up">
+          <div className="animate-slide-in-right">
             <h2 className="text-2xl font-bold mb-2">
               Pick your <span className="gradient-text">vibes</span>
             </h2>
@@ -197,7 +197,7 @@ export function Onboarding() {
 
         {/* Step 3: Duration & Travelers */}
         {step === 3 && (
-          <div className="animate-fade-in-up">
+          <div className="animate-slide-in-right">
             <h2 className="text-2xl font-bold mb-2">
               How <span className="gradient-text">long</span> and with{" "}
               <span className="gradient-text">whom</span>?
@@ -310,7 +310,7 @@ export function Onboarding() {
 
         {/* Step 4: Region */}
         {step === 4 && (
-          <div className="animate-fade-in-up">
+          <div className="animate-slide-in-right">
             <h2 className="text-2xl font-bold mb-2">
               Where do you want to <span className="gradient-text">go</span>?
             </h2>

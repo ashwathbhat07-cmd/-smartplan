@@ -260,7 +260,7 @@ export default async function Dashboard() {
             </p>
           </Link>
           <Link
-            href="/trip/new"
+            href="/surprise"
             className="p-5 rounded-xl border border-zinc-800/50 bg-zinc-900/30 hover:bg-zinc-900/60 hover:border-zinc-700/50 transition-all group"
           >
             <div className="text-2xl mb-2">🎲</div>
