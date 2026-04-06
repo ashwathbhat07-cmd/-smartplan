@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server";
 import { generateItinerary } from "@/lib/ai/gemini";
+import { checkAuth } from "@/lib/api-auth";
 
 export async function POST(request: Request) {
   try {
+    const { authenticated } = await checkAuth();
+    if (!authenticated) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
     const { destination, country, budget, duration, vibe, travelers } = body;
 

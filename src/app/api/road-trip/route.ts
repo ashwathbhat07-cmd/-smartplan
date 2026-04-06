@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { checkAuth } from "@/lib/api-auth";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function POST(request: Request) {
   try {
+    const { authenticated } = await checkAuth();
+    if (!authenticated) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { from, to, country } = await request.json();
 
     const prompt = `You are a road trip expert in ${country || "India"}. Plan pit stops for a drive from ${from} to ${to}.

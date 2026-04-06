@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Expense {
   id: string;
@@ -24,7 +24,19 @@ interface ExpenseTrackerProps {
 }
 
 export function ExpenseTracker({ budget }: ExpenseTrackerProps) {
-  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [expenses, setExpenses] = useState<Expense[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const saved = localStorage.getItem("smartplan-expenses");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem("smartplan-expenses", JSON.stringify(expenses));
+  }, [expenses]);
   const [showForm, setShowForm] = useState(false);
   const [newExpense, setNewExpense] = useState({
     title: "",
