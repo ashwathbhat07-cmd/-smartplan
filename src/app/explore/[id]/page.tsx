@@ -12,6 +12,7 @@ import { PackingList } from "@/components/trip/packing-list";
 import { TravelInfo } from "@/components/trip/travel-info";
 import { ShareCard } from "@/components/trip/share-card";
 import { RoadTrip } from "@/components/trip/road-trip";
+import { DestinationInsights } from "@/components/trip/destination-insights";
 import { saveTrip } from "@/lib/supabase/trips";
 import type { GeneratedItinerary } from "@/lib/ai/gemini";
 import type { Vibe } from "@/types";
@@ -377,6 +378,7 @@ export default function DestinationDetailPage() {
         {/* Tab: Info */}
         {activeTab === "info" && (
           <div className="space-y-6 animate-fade-in-up">
+            <DestinationInsights destination={dest} />
             <WeatherWidget
               lat={dest.latitude}
               lng={dest.longitude}
