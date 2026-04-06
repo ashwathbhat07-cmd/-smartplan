@@ -13,6 +13,8 @@ import { TravelInfo } from "@/components/trip/travel-info";
 import { ShareCard } from "@/components/trip/share-card";
 import { RoadTrip } from "@/components/trip/road-trip";
 import { DestinationInsights } from "@/components/trip/destination-insights";
+import { TravelGuide } from "@/components/trip/travel-guide";
+import { PlanB } from "@/components/trip/plan-b";
 import { BestTimeCalendar } from "@/components/trip/best-time-calendar";
 import { DocumentChecklist } from "@/components/trip/document-checklist";
 import { ValueAssessment } from "@/components/trip/value-assessment";
@@ -136,7 +138,7 @@ export default function DestinationDetailPage() {
           <img
             src={dest.image_url}
             alt={dest.name}
-            className="w-full h-full object-cover"
+            className="w-full h-[120%] object-cover -mt-[10%] sticky top-0"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
           <div className="absolute bottom-6 left-6 right-6">
@@ -393,6 +395,7 @@ export default function DestinationDetailPage() {
             <ValueAssessment destination={dest} budget={budget} duration={duration} />
             <BestTimeCalendar destination={dest} />
             <DestinationInsights destination={dest} />
+            <TravelGuide destination={dest} />
             <WeatherWidget
               lat={dest.latitude}
               lng={dest.longitude}
@@ -429,6 +432,7 @@ export default function DestinationDetailPage() {
                 <div className="text-xs text-zinc-500">Best Season</div>
               </div>
             </div>
+            <PlanB destination={dest} budget={budget} duration={duration} />
           </div>
         )}
       </div>
