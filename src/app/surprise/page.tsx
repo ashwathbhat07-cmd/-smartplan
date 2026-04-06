@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { destinations } from "@/lib/data/destinations";
 import { formatBudget } from "@/lib/engine/budget-engine";
@@ -17,10 +17,18 @@ export default function SurprisePage() {
     return destinations.filter((d) => d.avg_daily_cost * 3 <= budget * 1.3);
   }, [budget]);
 
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Cleanup interval on unmount
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
+
   const handleSurprise = () => {
     const matching = getMatchingDestinations();
     if (matching.length === 0) {
-      // Fallback — show cheapest destinations
       const sorted = [...destinations].sort((a, b) => a.avg_daily_cost - b.avg_daily_cost);
       setRevealed(sorted[0]);
       return;
@@ -29,22 +37,25 @@ export default function SurprisePage() {
     setSpinning(true);
     setRevealed(null);
 
-    // Slot machine effect — rapidly cycle through destinations
+    // Clear any existing interval
+    if (intervalRef.current) clearInterval(intervalRef.current);
+
     let count = 0;
     const totalSpins = 20;
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       const randomDest = matching[Math.floor(Math.random() * matching.length)];
       setDisplayDest(randomDest);
       count++;
 
       if (count >= totalSpins) {
-        clearInterval(interval);
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        intervalRef.current = null;
         const winner = matching[Math.floor(Math.random() * matching.length)];
         setDisplayDest(winner);
         setRevealed(winner);
         setSpinning(false);
       }
-    }, 100 + count * 15); // Gradually slows down
+    }, 100 + count * 15);
   };
 
   const handleGoToDest = () => {
