@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import type { Destination } from "@/types";
 import { destinations } from "@/lib/data/destinations";
 import { formatBudget } from "@/lib/engine/budget-engine";
-import Link from "next/link";
 
 interface PlanBProps {
   destination: Destination;
