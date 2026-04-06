@@ -13,6 +13,9 @@ import { TravelInfo } from "@/components/trip/travel-info";
 import { ShareCard } from "@/components/trip/share-card";
 import { RoadTrip } from "@/components/trip/road-trip";
 import { DestinationInsights } from "@/components/trip/destination-insights";
+import { BestTimeCalendar } from "@/components/trip/best-time-calendar";
+import { DocumentChecklist } from "@/components/trip/document-checklist";
+import { ValueAssessment } from "@/components/trip/value-assessment";
 import { saveTrip } from "@/lib/supabase/trips";
 import type { GeneratedItinerary } from "@/lib/ai/gemini";
 import type { Vibe } from "@/types";
@@ -365,6 +368,7 @@ export default function DestinationDetailPage() {
         {activeTab === "tools" && (
           <div className="space-y-6 animate-fade-in-up">
             <ExpenseTracker budget={budget} />
+            <DocumentChecklist destination={dest} />
             <PackingList
               destination={dest.name}
               country={dest.country}
@@ -378,6 +382,8 @@ export default function DestinationDetailPage() {
         {/* Tab: Info */}
         {activeTab === "info" && (
           <div className="space-y-6 animate-fade-in-up">
+            <ValueAssessment destination={dest} budget={budget} duration={duration} />
+            <BestTimeCalendar destination={dest} />
             <DestinationInsights destination={dest} />
             <WeatherWidget
               lat={dest.latitude}
