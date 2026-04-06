@@ -87,10 +87,17 @@ export default function GroupDetailPage() {
     }
   };
 
+  const [revealLoading, setRevealLoading] = useState(false);
+
   const handleRevealResults = async () => {
-    const voteResults = await getVoteResults(id);
-    setResults(voteResults);
-    setShowResults(true);
+    setRevealLoading(true);
+    try {
+      const voteResults = await getVoteResults(id);
+      setResults(voteResults);
+      setShowResults(true);
+    } finally {
+      setRevealLoading(false);
+    }
   };
 
   // Top 6 destinations for voting
@@ -193,10 +200,13 @@ export default function GroupDetailPage() {
             </button>
             <button
               onClick={handleRevealResults}
-              className="p-6 rounded-xl border border-dashed border-teal-500/30 bg-teal-500/5 hover:bg-teal-500/10 transition-all text-center"
+              disabled={revealLoading}
+              className="p-6 rounded-xl border border-dashed border-teal-500/30 bg-teal-500/5 hover:bg-teal-500/10 transition-all text-center disabled:opacity-50"
             >
-              <div className="text-3xl mb-2">🏆</div>
-              <h3 className="font-semibold text-teal-400">Reveal Results</h3>
+              <div className="text-3xl mb-2">{revealLoading ? "⏳" : "🏆"}</div>
+              <h3 className="font-semibold text-teal-400">
+                {revealLoading ? "Loading..." : "Reveal Results"}
+              </h3>
               <p className="text-xs text-zinc-500 mt-1">
                 See where the group wants to go
               </p>
