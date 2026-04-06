@@ -2,7 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Vibe, OnboardingData } from "@/types";
+import type { Vibe, DietaryPref, OnboardingData } from "@/types";
+
+const dietOptions: { value: DietaryPref; label: string; emoji: string }[] = [
+  { value: "none", label: "No preference", emoji: "🍽️" },
+  { value: "vegetarian", label: "Vegetarian", emoji: "🥬" },
+  { value: "vegan", label: "Vegan", emoji: "🌱" },
+  { value: "no-beef", label: "No beef", emoji: "🐄" },
+  { value: "no-pork", label: "No pork", emoji: "🐷" },
+  { value: "no-seafood", label: "No seafood", emoji: "🐟" },
+  { value: "halal", label: "Halal only", emoji: "☪️" },
+];
 
 const vibeOptions: { value: Vibe; label: string; emoji: string; desc: string }[] = [
   { value: "adventure", label: "Adventure", emoji: "🏔️", desc: "Thrills & adrenaline" },
@@ -36,6 +46,7 @@ export function Onboarding() {
     startDate: null,
     travelers: 1,
     region: "both",
+    diet: "none",
   });
 
   const totalSteps = 4;
@@ -61,6 +72,7 @@ export function Onboarding() {
       vibes: data.vibes.join(","),
       travelers: data.travelers.toString(),
       region: data.region,
+      diet: data.diet,
       ...(data.startDate && { startDate: data.startDate }),
     });
     router.push(`/explore?${params.toString()}`);
@@ -270,6 +282,28 @@ export function Onboarding() {
                 }
                 className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700/50 text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors"
               />
+            </div>
+
+            {/* Dietary Preference */}
+            <div className="mt-6">
+              <label className="text-sm text-zinc-400 mb-3 block">
+                Dietary preference (for food recommendations)
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {dietOptions.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setData({ ...data, diet: opt.value })}
+                    className={`px-3 py-2 rounded-lg text-sm transition-all duration-200 border ${
+                      data.diet === opt.value
+                        ? "bg-indigo-600/10 border-indigo-500/50 text-indigo-400"
+                        : "bg-zinc-800/30 border-zinc-700/50 text-zinc-400 hover:border-zinc-600"
+                    }`}
+                  >
+                    {opt.emoji} {opt.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}

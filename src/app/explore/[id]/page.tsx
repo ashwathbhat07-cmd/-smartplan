@@ -16,6 +16,7 @@ import { DestinationInsights } from "@/components/trip/destination-insights";
 import { BestTimeCalendar } from "@/components/trip/best-time-calendar";
 import { DocumentChecklist } from "@/components/trip/document-checklist";
 import { ValueAssessment } from "@/components/trip/value-assessment";
+import { CostBreakdown } from "@/components/trip/cost-breakdown";
 import { saveTrip } from "@/lib/supabase/trips";
 import type { GeneratedItinerary } from "@/lib/ai/gemini";
 import type { Vibe } from "@/types";
@@ -271,6 +272,9 @@ export default function DestinationDetailPage() {
                 </div>
               </div>
             </div>
+
+            {/* Cost Breakdown */}
+            <CostBreakdown destination={dest} budget={budget} duration={duration} />
 
             {/* Activities */}
             <div className="p-5 rounded-xl bg-zinc-900/50 border border-zinc-800/50">

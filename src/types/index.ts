@@ -67,6 +67,8 @@ export interface ItineraryActivity {
   location: string;
 }
 
+export type DietaryPref = "vegetarian" | "vegan" | "no-beef" | "no-pork" | "no-seafood" | "halal" | "none";
+
 export interface OnboardingData {
   budget: number;
   duration: number;
@@ -74,4 +76,5 @@ export interface OnboardingData {
   startDate: string | null;
   travelers: number;
   region: "domestic" | "international" | "both";
+  diet: DietaryPref;
 }

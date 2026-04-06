@@ -21,6 +21,7 @@ function ExploreContent() {
       startDate: searchParams.get("startDate") || null,
       travelers: parseInt(searchParams.get("travelers") || "1"),
       region: (searchParams.get("region") || "both") as OnboardingData["region"],
+      diet: (searchParams.get("diet") || "none") as OnboardingData["diet"],
     }),
     [searchParams]
   );
