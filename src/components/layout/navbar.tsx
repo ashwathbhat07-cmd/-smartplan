@@ -69,6 +69,12 @@ export function Navbar() {
                 Groups
               </Link>
               <Link
+                href="/quiz"
+                className="text-sm text-zinc-400 hover:text-white transition-colors"
+              >
+                Quiz
+              </Link>
+              <Link
                 href="/surprise"
                 className="text-sm text-zinc-400 hover:text-white transition-colors"
               >

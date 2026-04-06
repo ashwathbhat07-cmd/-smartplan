@@ -15,6 +15,9 @@ import { RoadTrip } from "@/components/trip/road-trip";
 import { DestinationInsights } from "@/components/trip/destination-insights";
 import { TravelGuide } from "@/components/trip/travel-guide";
 import { PlanB } from "@/components/trip/plan-b";
+import { SOSButton } from "@/components/trip/sos-button";
+import { BookingLinks } from "@/components/trip/booking-links";
+import { LuggageCalculator } from "@/components/trip/luggage-calculator";
 import { BestTimeCalendar } from "@/components/trip/best-time-calendar";
 import { DocumentChecklist } from "@/components/trip/document-checklist";
 import { ValueAssessment } from "@/components/trip/value-assessment";
@@ -193,6 +196,7 @@ export default function DestinationDetailPage() {
                 ✓ Saved
               </span>
             )}
+            <SOSButton destination={dest} />
             <ShareCard
               destination={dest}
               duration={duration}
@@ -385,6 +389,8 @@ export default function DestinationDetailPage() {
               duration={duration}
               vibes={vibes}
             />
+            <LuggageCalculator />
+            <BookingLinks destination={dest} startDate={searchParams.get("startDate")} />
             <TravelInfo destination={dest} />
           </div>
         )}
