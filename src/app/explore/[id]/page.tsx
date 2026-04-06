@@ -9,6 +9,9 @@ import { DestinationMap } from "@/components/map/destination-map";
 import { BudgetOptions } from "@/components/trip/budget-options";
 import { WeatherWidget } from "@/components/trip/weather-widget";
 import { PackingList } from "@/components/trip/packing-list";
+import { TravelInfo } from "@/components/trip/travel-info";
+import { ShareCard } from "@/components/trip/share-card";
+import { RoadTrip } from "@/components/trip/road-trip";
 import type { GeneratedItinerary } from "@/lib/ai/gemini";
 import Link from "next/link";
 
@@ -100,6 +103,17 @@ export default function DestinationDetailPage() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Share Button */}
+        <div className="flex justify-end mb-4">
+          <ShareCard
+            destination={dest}
+            duration={duration}
+            budget={budget}
+            vibes={vibes}
+            startDate={searchParams.get("startDate")}
+          />
         </div>
 
         {/* Info Grid */}
@@ -200,6 +214,7 @@ export default function DestinationDetailPage() {
           />
           <div className="space-y-6">
             <ExpenseTracker budget={budget} />
+            <TravelInfo destination={dest} />
             <PackingList
               destination={dest.name}
               country={dest.country}
@@ -207,6 +222,11 @@ export default function DestinationDetailPage() {
               vibes={vibes}
             />
           </div>
+        </div>
+
+        {/* Road Trip Mode */}
+        <div className="mb-8">
+          <RoadTrip destination={dest} />
         </div>
 
         {/* Budget Options (if over budget) */}
