@@ -48,6 +48,26 @@ export function Navbar() {
         </Link>
 
         <div className="flex items-center gap-6">
+          {/* Public links — visible to everyone */}
+          <Link
+            href="/compare"
+            className="text-sm text-zinc-400 hover:text-white transition-colors hidden sm:block"
+          >
+            Compare
+          </Link>
+          <Link
+            href="/quiz"
+            className="text-sm text-zinc-400 hover:text-white transition-colors hidden sm:block"
+          >
+            Quiz
+          </Link>
+          <Link
+            href="/surprise"
+            className="text-sm text-zinc-400 hover:text-white transition-colors hidden sm:block"
+          >
+            Surprise Me
+          </Link>
+
           {user ? (
             <>
               <Link
@@ -57,28 +77,10 @@ export function Navbar() {
                 Dashboard
               </Link>
               <Link
-                href="/compare"
-                className="text-sm text-zinc-400 hover:text-white transition-colors"
-              >
-                Compare
-              </Link>
-              <Link
                 href="/groups"
                 className="text-sm text-zinc-400 hover:text-white transition-colors"
               >
                 Groups
-              </Link>
-              <Link
-                href="/quiz"
-                className="text-sm text-zinc-400 hover:text-white transition-colors"
-              >
-                Quiz
-              </Link>
-              <Link
-                href="/surprise"
-                className="text-sm text-zinc-400 hover:text-white transition-colors"
-              >
-                Surprise Me
               </Link>
               <div className="flex items-center gap-3">
                 {user.user_metadata?.avatar_url && (
