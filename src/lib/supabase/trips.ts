@@ -2,6 +2,23 @@ import { createClient } from "@/lib/supabase/client";
 import type { GeneratedItinerary } from "@/lib/ai/gemini";
 import type { Vibe } from "@/types";
 
+async function ensureProfile(supabase: ReturnType<typeof createClient>, user: { id: string; email?: string; user_metadata?: Record<string, string> }) {
+  const { data: existing } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", user.id)
+    .single();
+
+  if (!existing) {
+    await supabase.from("profiles").insert({
+      id: user.id,
+      email: user.email || "",
+      full_name: user.user_metadata?.full_name || null,
+      avatar_url: user.user_metadata?.avatar_url || null,
+    });
+  }
+}
+
 export async function saveTrip(params: {
   destinationId: string;
   title: string;

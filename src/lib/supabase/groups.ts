@@ -1,5 +1,22 @@
 import { createClient } from "@/lib/supabase/client";
 
+async function ensureProfile(supabase: ReturnType<typeof createClient>, user: { id: string; email?: string; user_metadata?: Record<string, string> }) {
+  const { data: existing } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", user.id)
+    .single();
+
+  if (!existing) {
+    await supabase.from("profiles").insert({
+      id: user.id,
+      email: user.email || "",
+      full_name: user.user_metadata?.full_name || null,
+      avatar_url: user.user_metadata?.avatar_url || null,
+    });
+  }
+}
+
 export async function createGroup(name: string) {
   const supabase = createClient();
   const {
@@ -7,6 +24,9 @@ export async function createGroup(name: string) {
   } = await supabase.auth.getUser();
 
   if (!user) throw new Error("Not authenticated");
+
+  // Ensure profile exists (Google OAuth might not trigger DB trigger)
+  await ensureProfile(supabase, user);
 
   // Create group
   const { data: group, error: groupError } = await supabase

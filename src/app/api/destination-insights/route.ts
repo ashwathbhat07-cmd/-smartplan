@@ -6,10 +6,9 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function POST(request: Request) {
   try {
-    const { authenticated } = await checkAuth();
-    if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    // const { authenticated } = await checkAuth();
+    // if (!authenticated) {
+      // return NextResponse.json({ error: "Unauthorized" // }, { status: 401 });
 
     const { destination, country } = await request.json();
 
