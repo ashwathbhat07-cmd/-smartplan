@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Destination } from "@/types";
+import { authFetch } from "@/lib/api-fetch";
 
 interface InsightsData {
   insider_tips: string[];
@@ -38,7 +39,7 @@ export function DestinationInsights({ destination }: DestinationInsightsProps) {
     if (loading) return;
     setLoading(true);
     try {
-      const res = await fetch("/api/destination-insights", {
+      const res = await authFetch("/api/destination-insights", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

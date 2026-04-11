@@ -1,8 +1,30 @@
-import { createClient } from "@/lib/supabase/server";
+import { createServerClient } from "@supabase/ssr";
 import { headers } from "next/headers";
 
 export async function checkAuth(): Promise<{ authenticated: boolean; userId?: string }> {
   try {
+    const headersList = await headers();
+
+    // Try Bearer token first (sent from client-side fetch)
+    const authHeader = headersList.get("authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.slice(7);
+      const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: { getAll: () => [], setAll: () => {} },
+          global: { headers: { Authorization: `Bearer ${token}` } },
+        }
+      );
+      const { data: { user } } = await supabase.auth.getUser(token);
+      if (user) {
+        return { authenticated: true, userId: user.id };
+      }
+    }
+
+    // Fallback: try cookie-based auth (works in GET, may fail in POST on Vercel)
+    const { createClient } = await import("@/lib/supabase/server");
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {

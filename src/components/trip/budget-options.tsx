@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Destination } from "@/types";
 import { formatBudget } from "@/lib/engine/budget-engine";
+import { authFetch } from "@/lib/api-fetch";
 import { destinations } from "@/lib/data/destinations";
 import Link from "next/link";
 
@@ -50,7 +51,7 @@ export function BudgetOptions({
   const handleStretchBudget = async () => {
     setLoadingTips(true);
     try {
-      const res = await fetch("/api/itinerary/stretch-tips", {
+      const res = await authFetch("/api/itinerary/stretch-tips", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Destination } from "@/types";
+import { authFetch } from "@/lib/api-fetch";
 
 interface GuideData {
   health: { vaccines: string[]; water_safety: string; food_safety: string; pharmacy_tip: string };
@@ -35,7 +36,7 @@ export function TravelGuide({ destination }: { destination: Destination }) {
     if (loading) return;
     setLoading(true);
     try {
-      const res = await fetch("/api/travel-guide", {
+      const res = await authFetch("/api/travel-guide", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ destination: destination.name, country: destination.country, month: new Date().getMonth() + 1 }),

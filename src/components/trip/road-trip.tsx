@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Destination } from "@/types";
+import { authFetch } from "@/lib/api-fetch";
 
 interface PitStop {
   name: string;
@@ -42,7 +43,7 @@ export function RoadTrip({ destination }: RoadTripProps) {
     if (!fromCity.trim()) return;
     setLoading(true);
     try {
-      const res = await fetch("/api/road-trip", {
+      const res = await authFetch("/api/road-trip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

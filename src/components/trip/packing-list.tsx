@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { authFetch } from "@/lib/api-fetch";
 
 interface PackingListData {
   essentials: string[];
@@ -34,7 +35,7 @@ export function PackingList({ destination, country, duration, vibes }: PackingLi
   const handleGenerate = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/packing-list", {
+      const res = await authFetch("/api/packing-list", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ destination, country, duration, vibes: vibes.join(", ") }),

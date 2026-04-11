@@ -25,6 +25,7 @@ import { ValueAssessment } from "@/components/trip/value-assessment";
 import { CostBreakdown } from "@/components/trip/cost-breakdown";
 import { QuickFactsExtra } from "@/components/trip/quick-facts-extra";
 import { saveTrip } from "@/lib/supabase/trips";
+import { authFetch } from "@/lib/api-fetch";
 import type { GeneratedItinerary } from "@/lib/ai/gemini";
 import type { Vibe } from "@/types";
 import Link from "next/link";
@@ -89,9 +90,8 @@ function DestinationDetailContent() {
     const slowTimer = setTimeout(() => setSlowWarning(true), 10000); // 10s warning
 
     try {
-      const res = await fetch("/api/itinerary/generate", {
+      const res = await authFetch("/api/itinerary/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         signal: controller.signal,
         body: JSON.stringify({
           destination: dest.name,

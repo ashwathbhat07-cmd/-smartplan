@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Destination } from "@/types";
+import { authFetch } from "@/lib/api-fetch";
 
 interface TravelInfoProps {
   destination: Destination;
@@ -26,7 +27,7 @@ export function TravelInfo({ destination }: TravelInfoProps) {
   const handleGenerate = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/travel-info", {
+      const res = await authFetch("/api/travel-info", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

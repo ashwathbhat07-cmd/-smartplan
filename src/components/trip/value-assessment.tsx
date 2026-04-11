@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Destination } from "@/types";
 import { formatBudget } from "@/lib/engine/budget-engine";
+import { authFetch } from "@/lib/api-fetch";
 
 interface AssessmentData {
   verdict: "excellent" | "good" | "fair" | "poor";
@@ -35,7 +36,7 @@ export function ValueAssessment({ destination, budget, duration }: ValueAssessme
     if (loading) return;
     setLoading(true);
     try {
-      const res = await fetch("/api/value-assessment", {
+      const res = await authFetch("/api/value-assessment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
