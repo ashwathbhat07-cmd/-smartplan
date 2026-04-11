@@ -1,14 +1,28 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+import { checkAuth, checkOrigin } from "@/lib/api-auth";
+import { sanitizeInput } from "@/lib/api-sanitize";
 
 export async function POST(request: Request) {
   try {
+    if (!(await checkOrigin())) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-    const { from, to, country } = await request.json();
+    const { authenticated } = await checkAuth();
+    if (!authenticated) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    const prompt = `You are a road trip expert in ${country || "India"}. Plan pit stops for a drive from ${from} to ${to}.
+    if (!process.env.GEMINI_API_KEY) {
+      return NextResponse.json({ error: "API key not configured" }, { status: 500 });
+    }
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+    const body = await request.json();
+    const from = sanitizeInput(body.from);
+    const to = sanitizeInput(body.to);
+    const country = sanitizeInput(body.country) || "India";
+
+    const prompt = `You are a road trip expert in ${country}. Plan pit stops for a drive from ${from} to ${to}.
 
 List 5-8 interesting stops along the route. For each stop include:
 - Real place names (restaurants, viewpoints, temples, waterfalls, dhabas)

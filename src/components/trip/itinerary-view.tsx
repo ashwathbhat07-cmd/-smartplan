@@ -174,7 +174,7 @@ export function ItineraryView({ itinerary, onUpdateItinerary }: ItineraryViewPro
               return (
                 <div
                   key={index}
-                  className={`relative flex gap-4 p-4 rounded-xl border transition-all duration-200 hover:border-zinc-600/50 ${
+                  className={`group relative flex gap-4 p-4 rounded-xl border transition-all duration-200 hover:border-zinc-600/50 ${
                     typeColors[activity.type] || typeColors.activity
                   } ${activity.hiddenGem ? "ring-1 ring-amber-500/20" : ""}`}
                 >

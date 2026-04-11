@@ -36,7 +36,7 @@ const features = [
 ];
 
 const stats = [
-  { value: "100+", label: "Curated Destinations" },
+  { value: "44+", label: "Curated Destinations" },
   { value: "₹0", label: "Starting Price" },
   { value: "AI", label: "Powered Itineraries" },
   { value: "∞", label: "Group Members" },

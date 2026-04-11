@@ -20,6 +20,12 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Missing lat/lng" }, { status: 400 });
   }
 
+  const latNum = parseFloat(lat);
+  const lngNum = parseFloat(lng);
+  if (isNaN(latNum) || isNaN(lngNum) || latNum < -90 || latNum > 90 || lngNum < -180 || lngNum > 180) {
+    return NextResponse.json({ error: "Invalid lat/lng values" }, { status: 400 });
+  }
+
   const apiKey = process.env.OPENWEATHER_API_KEY;
 
   // If no API key, return mock seasonal data

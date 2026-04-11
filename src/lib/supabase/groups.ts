@@ -115,6 +115,11 @@ export async function getMyGroups() {
 
 export async function getGroupDetails(groupId: string) {
   const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Not authenticated");
 
   const { data: group, error } = await supabase
     .from("groups")
@@ -123,6 +128,16 @@ export async function getGroupDetails(groupId: string) {
     .single();
 
   if (error) throw error;
+
+  // Verify user is a member
+  const { data: membership } = await supabase
+    .from("group_members")
+    .select("id")
+    .eq("group_id", groupId)
+    .eq("user_id", user.id)
+    .single();
+
+  if (!membership) throw new Error("You are not a member of this group");
 
   const { data: members } = await supabase
     .from("group_members")
@@ -148,6 +163,16 @@ export async function castVote(
   } = await supabase.auth.getUser();
 
   if (!user) throw new Error("Not authenticated");
+
+  // Verify user is a member of this group
+  const { data: membership } = await supabase
+    .from("group_members")
+    .select("id")
+    .eq("group_id", groupId)
+    .eq("user_id", user.id)
+    .single();
+
+  if (!membership) throw new Error("You are not a member of this group");
 
   // Upsert vote (update if exists, insert if new)
   const { error } = await supabase.from("votes").upsert(

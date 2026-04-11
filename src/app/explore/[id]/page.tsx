@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useSearchParams } from "next/navigation";
-import { useState, useMemo } from "react";
+import { useState, useMemo, Suspense } from "react";
 import { getDestinationById, formatBudget } from "@/lib/engine/budget-engine";
 import { ItineraryView } from "@/components/trip/itinerary-view";
 import { ExpenseTracker } from "@/components/trip/expense-tracker";
@@ -37,7 +37,7 @@ const tabs: { id: Tab; label: string; icon: string }[] = [
   { id: "info", label: "Info", icon: "ℹ️" },
 ];
 
-export default function DestinationDetailPage() {
+function DestinationDetailContent() {
   const { id } = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const dest = useMemo(() => getDestinationById(id), [id]);
@@ -76,14 +76,23 @@ export default function DestinationDetailPage() {
 
   const estimatedTotal = dest.avg_daily_cost * duration;
 
+  const [slowWarning, setSlowWarning] = useState(false);
+
   const handleGenerate = async () => {
     if (loading) return; // prevent double-click
     setLoading(true);
     setError(null);
+    setSlowWarning(false);
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 45000); // 45s timeout
+    const slowTimer = setTimeout(() => setSlowWarning(true), 10000); // 10s warning
+
     try {
       const res = await fetch("/api/itinerary/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
         body: JSON.stringify({
           destination: dest.name,
           country: dest.country,
@@ -102,12 +111,19 @@ export default function DestinationDetailPage() {
       const data: GeneratedItinerary = await res.json();
       setItinerary(data);
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to generate itinerary. Please try again."
-      );
+      if (err instanceof DOMException && err.name === "AbortError") {
+        setError("Generation timed out. Please try again.");
+      } else {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Failed to generate itinerary. Please try again."
+        );
+      }
     } finally {
+      clearTimeout(timeout);
+      clearTimeout(slowTimer);
+      setSlowWarning(false);
       setLoading(false);
     }
   };
@@ -128,7 +144,7 @@ export default function DestinationDetailPage() {
       });
       setSaved(true);
     } catch {
-      setError("Please sign in to save your trip.");
+      setError("sign-in-required");
     } finally {
       setSaving(false);
     }
@@ -345,14 +361,26 @@ export default function DestinationDetailPage() {
                           strokeLinecap="round"
                         />
                       </svg>
-                      Generating your perfect trip...
+                      {slowWarning ? "Taking longer than usual..." : "Generating your perfect trip..."}
                     </span>
                   ) : (
                     "Generate My Itinerary ✨"
                   )}
                 </button>
                 {error && (
-                  <p className="text-red-400 text-sm mt-4">{error}</p>
+                  <div className="mt-4">
+                    {error === "sign-in-required" ? (
+                      <p className="text-amber-400 text-sm">
+                        Please{" "}
+                        <Link href="/login" className="underline font-medium hover:text-amber-300">
+                          sign in
+                        </Link>{" "}
+                        to save your trip.
+                      </p>
+                    ) : (
+                      <p className="text-red-400 text-sm">{error}</p>
+                    )}
+                  </div>
                 )}
               </div>
             )}
@@ -382,7 +410,7 @@ export default function DestinationDetailPage() {
         {/* Tab: Tools */}
         {activeTab === "tools" && (
           <div className="space-y-6 animate-fade-in-up">
-            <ExpenseTracker budget={budget} />
+            <ExpenseTracker budget={budget} destinationId={dest.id} />
             <DocumentChecklist destination={dest} />
             <PackingList
               destination={dest.name}
@@ -445,5 +473,19 @@ export default function DestinationDetailPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function DestinationDetailPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen pt-24 flex items-center justify-center">
+          <div className="text-zinc-500">Loading destination details...</div>
+        </div>
+      }
+    >
+      <DestinationDetailContent />
+    </Suspense>
   );
 }

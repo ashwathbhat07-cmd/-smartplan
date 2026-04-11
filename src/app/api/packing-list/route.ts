@@ -1,13 +1,28 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+import { checkAuth, checkOrigin } from "@/lib/api-auth";
+import { sanitizeInput, sanitizeNumber } from "@/lib/api-sanitize";
 
 export async function POST(request: Request) {
   try {
+    if (!(await checkOrigin())) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-    const { destination, country, duration, vibes, weather } =
-      await request.json();
+    const { authenticated } = await checkAuth();
+    if (!authenticated) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!process.env.GEMINI_API_KEY) {
+      return NextResponse.json({ error: "API key not configured" }, { status: 500 });
+    }
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+    const body = await request.json();
+    const destination = sanitizeInput(body.destination);
+    const country = sanitizeInput(body.country);
+    const duration = sanitizeNumber(body.duration, 1, 30, 3);
+    const vibes = sanitizeInput(body.vibes);
+    const weather = sanitizeInput(body.weather, 100);
 
     const prompt = `Generate a smart packing list for a ${duration}-day trip to ${destination}, ${country}.
 

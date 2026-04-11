@@ -140,7 +140,7 @@ export default function ComparePage() {
         </div>
 
         {/* Selectors */}
-        <div className="grid grid-cols-[1fr,auto,1fr] gap-4 items-center mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-[1fr,auto,1fr] gap-4 items-center mb-8">
           <DestinationSelector value={destA} onChange={setDestA} exclude={destB} />
           <div className="text-zinc-600 font-bold text-lg">VS</div>
           <DestinationSelector value={destB} onChange={setDestB} exclude={destA} />

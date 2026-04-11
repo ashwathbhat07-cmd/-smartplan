@@ -1,24 +1,33 @@
 import { NextResponse } from "next/server";
 import { generateItinerary } from "@/lib/ai/gemini";
-import { checkAuth } from "@/lib/api-auth";
+import { checkAuth, checkOrigin } from "@/lib/api-auth";
+import { sanitizeInput, sanitizeNumber } from "@/lib/api-sanitize";
 
 export async function POST(request: Request) {
   try {
-    // Auth check disabled temporarily — Supabase SSR cookies don't pass in POST
-    // TODO: Re-enable with proper token-based auth
-    // const { authenticated } = await checkAuth();
-    // if (!authenticated) {
-    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    // }
+    const originOk = await checkOrigin();
+    if (!originOk) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const { authenticated } = await checkAuth();
+    if (!authenticated) {
+      return NextResponse.json({ error: "Unauthorized — please sign in to generate itineraries" }, { status: 401 });
+    }
 
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json({ error: "Gemini API key not configured" }, { status: 500 });
     }
 
     const body = await request.json();
-    const { destination, country, budget, duration, vibe, travelers } = body;
+    const destination = sanitizeInput(body.destination);
+    const country = sanitizeInput(body.country);
+    const budget = sanitizeNumber(body.budget, 100, 10000000, 15000);
+    const duration = sanitizeNumber(body.duration, 1, 30, 3);
+    const vibe = sanitizeInput(body.vibe);
+    const travelers = sanitizeNumber(body.travelers, 1, 50, 1);
 
-    if (!destination || !country || !budget || !duration || !vibe) {
+    if (!destination || !country || !vibe) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -28,10 +37,10 @@ export async function POST(request: Request) {
     const itinerary = await generateItinerary({
       destination,
       country,
-      budget: Number(budget),
-      duration: Number(duration),
+      budget,
+      duration,
       vibe,
-      travelers: Number(travelers) || 1,
+      travelers,
     });
 
     return NextResponse.json(itinerary);

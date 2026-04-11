@@ -56,34 +56,48 @@ export async function saveTrip(params: {
   if (tripError) throw tripError;
 
   // 2. Create itinerary days and activities
-  for (const day of params.itinerary.days) {
-    const { data: dayRow, error: dayError } = await supabase
-      .from("itinerary_days")
-      .insert({
-        trip_id: trip.id,
-        day_number: day.dayNumber,
-        title: day.title,
-      })
-      .select()
-      .single();
-
-    if (dayError) throw dayError;
-
-    const activities = day.activities.map((activity, index) => ({
-      day_id: dayRow.id,
-      sort_order: index,
-      time: activity.time,
-      title: activity.title,
-      description: activity.description,
-      cost_estimate: activity.costEstimate,
-      location: activity.location,
+  try {
+    // Insert all days in a single batch
+    const dayInserts = params.itinerary.days.map((day) => ({
+      trip_id: trip.id,
+      day_number: day.dayNumber,
+      title: day.title,
     }));
 
-    const { error: actError } = await supabase
-      .from("itinerary_activities")
-      .insert(activities);
+    const { data: dayRows, error: dayError } = await supabase
+      .from("itinerary_days")
+      .insert(dayInserts)
+      .select();
 
-    if (actError) throw actError;
+    if (dayError) throw dayError;
+    if (!dayRows) throw new Error("Failed to create itinerary days");
+
+    // Insert all activities in a single batch
+    const allActivities = params.itinerary.days.flatMap((day) => {
+      const dayRow = dayRows.find((r) => r.day_number === day.dayNumber);
+      if (!dayRow) return [];
+      return day.activities.map((activity, index) => ({
+        day_id: dayRow.id,
+        sort_order: index,
+        time: activity.time,
+        title: activity.title,
+        description: activity.description,
+        cost_estimate: activity.costEstimate,
+        location: activity.location,
+      }));
+    });
+
+    if (allActivities.length > 0) {
+      const { error: actError } = await supabase
+        .from("itinerary_activities")
+        .insert(allActivities);
+
+      if (actError) throw actError;
+    }
+  } catch (err) {
+    // Cleanup: delete the trip if itinerary creation fails
+    await supabase.from("trips").delete().eq("id", trip.id);
+    throw err;
   }
 
   return trip;

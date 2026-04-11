@@ -24,8 +24,8 @@ export default function GroupsPage() {
     try {
       const data = await getMyGroups();
       setGroups(data);
-    } catch {
-      // Not logged in or error
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load groups. Please sign in first.");
     } finally {
       setLoading(false);
     }
@@ -36,7 +36,7 @@ export default function GroupsPage() {
     setCreating(true);
     setError("");
     try {
-      const group = await createGroup(groupName);
+      const group = await createGroup(groupName.trim());
       router.push(`/groups/${group.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create group");

@@ -17,12 +17,12 @@ export default function SurprisePage() {
     return destinations.filter((d) => d.avg_daily_cost * 3 <= budget * 1.3);
   }, [budget]);
 
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Cleanup interval on unmount
+  // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, []);
 
@@ -38,24 +38,23 @@ export default function SurprisePage() {
     setRevealed(null);
 
     // Clear any existing interval
-    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (timeoutRef.current) clearInterval(timeoutRef.current);
 
-    let count = 0;
     const totalSpins = 20;
-    intervalRef.current = setInterval(() => {
-      const randomDest = matching[Math.floor(Math.random() * matching.length)];
-      setDisplayDest(randomDest);
-      count++;
+    const winner = matching[Math.floor(Math.random() * matching.length)];
 
+    function spinStep(count: number) {
       if (count >= totalSpins) {
-        if (intervalRef.current) clearInterval(intervalRef.current);
-        intervalRef.current = null;
-        const winner = matching[Math.floor(Math.random() * matching.length)];
         setDisplayDest(winner);
         setRevealed(winner);
         setSpinning(false);
+        return;
       }
-    }, 100 + count * 15);
+      const randomDest = matching[Math.floor(Math.random() * matching.length)];
+      setDisplayDest(randomDest);
+      timeoutRef.current = setTimeout(() => spinStep(count + 1), 100 + count * 15);
+    }
+    spinStep(0);
   };
 
   const handleGoToDest = () => {

@@ -1,12 +1,25 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+import { checkAuth, checkOrigin } from "@/lib/api-auth";
+import { sanitizeInput } from "@/lib/api-sanitize";
 
 export async function POST(request: Request) {
   try {
+    if (!(await checkOrigin())) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-    const { destination, country } = await request.json();
+    const { authenticated } = await checkAuth();
+    if (!authenticated) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!process.env.GEMINI_API_KEY) {
+      return NextResponse.json({ error: "API key not configured" }, { status: 500 });
+    }
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+    const body = await request.json();
+    const destination = sanitizeInput(body.destination);
+    const country = sanitizeInput(body.country);
 
     const prompt = `You are a travel expert. Provide insider knowledge about ${destination}, ${country} for Indian tourists.
 

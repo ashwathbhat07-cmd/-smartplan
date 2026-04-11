@@ -30,14 +30,15 @@ export default function GroupDetailPage() {
   const [results, setResults] = useState<VoteResult[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [voteSubmitting, setVoteSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const loadGroup = useCallback(async () => {
     try {
       const data = await getGroupDetails(id);
       setGroup(data.group);
       setMembers(data.members as unknown as GroupMember[]);
-    } catch {
-      // Error loading group
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load group. You may not be logged in or may not have access.");
     } finally {
       setLoading(false);
     }
@@ -80,14 +81,15 @@ export default function GroupDetailPage() {
       const voteResults = await getVoteResults(id);
       setResults(voteResults);
       setShowResults(true);
-    } catch {
-      // Error
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to submit votes. Please try again.");
     } finally {
       setVoteSubmitting(false);
     }
   };
 
   const [revealLoading, setRevealLoading] = useState(false);
+  const [destSearch, setDestSearch] = useState("");
 
   const handleRevealResults = async () => {
     setRevealLoading(true);
@@ -100,8 +102,9 @@ export default function GroupDetailPage() {
     }
   };
 
-  // Top 6 destinations for voting
-  const votingDestinations = destinations.slice(0, 12);
+  const votingDestinations = destSearch
+    ? destinations.filter((d) => d.name.toLowerCase().includes(destSearch.toLowerCase()))
+    : destinations;
 
   if (loading) {
     return (
@@ -117,7 +120,13 @@ export default function GroupDetailPage() {
         <div className="text-center">
           <div className="text-5xl mb-4">🔒</div>
           <h1 className="text-xl font-bold mb-2">Group not found</h1>
-          <p className="text-zinc-500">You may not have access to this group.</p>
+          <p className="text-zinc-500 mb-4">{error || "You may not have access to this group."}</p>
+          <a
+            href="/groups"
+            className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors inline-block"
+          >
+            Back to Groups
+          </a>
         </div>
       </div>
     );
@@ -228,6 +237,13 @@ export default function GroupDetailPage() {
                 Cancel
               </button>
             </div>
+            <input
+              type="text"
+              placeholder="Search destinations..."
+              value={destSearch}
+              onChange={(e) => setDestSearch(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-lg bg-zinc-800/50 border border-zinc-700/50 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500 placeholder:text-zinc-600 mb-4"
+            />
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
               {votingDestinations.map((dest) => {
                 const myRank = myVotes.get(dest.id);
@@ -268,6 +284,9 @@ export default function GroupDetailPage() {
                 );
               })}
             </div>
+            {error && (
+              <p className="text-red-400 text-sm mb-3">{error}</p>
+            )}
             <button
               onClick={handleSubmitVotes}
               disabled={myVotes.size === 0 || voteSubmitting}

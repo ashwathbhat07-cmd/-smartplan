@@ -102,17 +102,36 @@ function MapInner({
         maxWidth: 280,
       });
 
-      marker.on("mouseover", function () {
-        marker.openPopup();
-        marker.setRadius(isSelected ? 13 : 10);
-      });
-      marker.on("mouseout", function () {
-        marker.closePopup();
-        marker.setRadius(isSelected ? 10 : 7);
-      });
-      marker.on("click", function () {
-        onSelectDestination?.(dest.id);
-      });
+      const isTouchDevice = typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+
+      if (isTouchDevice) {
+        // On touch: tap to toggle popup, double-tap to select
+        marker.on("click", function () {
+          if (marker.isPopupOpen()) {
+            marker.closePopup();
+            marker.setRadius(isSelected ? 10 : 7);
+          } else {
+            marker.openPopup();
+            marker.setRadius(isSelected ? 13 : 10);
+          }
+        });
+        marker.on("dblclick", function () {
+          onSelectDestination?.(dest.id);
+        });
+      } else {
+        // On desktop: hover for popup, click to select
+        marker.on("mouseover", function () {
+          marker.openPopup();
+          marker.setRadius(isSelected ? 13 : 10);
+        });
+        marker.on("mouseout", function () {
+          marker.closePopup();
+          marker.setRadius(isSelected ? 10 : 7);
+        });
+        marker.on("click", function () {
+          onSelectDestination?.(dest.id);
+        });
+      }
 
       markersRef.current.push(marker);
     });

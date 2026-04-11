@@ -85,11 +85,22 @@ RESPOND IN THIS EXACT JSON FORMAT (no markdown, no code blocks, just raw JSON):
   const response = result.response;
   const text = response.text();
 
-  // Parse JSON — handle potential markdown wrapping
+  // Parse JSON — handle potential markdown wrapping and edge cases
   let cleaned = text.trim();
+
+  // Strip markdown code blocks (various formats)
   if (cleaned.startsWith("```")) {
-    cleaned = cleaned.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
+    cleaned = cleaned.replace(/^```(?:json)?\s*\n?/, "").replace(/\n?\s*```\s*$/, "");
   }
+
+  // Try to extract JSON object if there's extra text before/after
+  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+  if (jsonMatch) {
+    cleaned = jsonMatch[0];
+  }
+
+  // Remove trailing commas before } or ] (common Gemini mistake)
+  cleaned = cleaned.replace(/,\s*([}\]])/g, "$1");
 
   try {
     const parsed: GeneratedItinerary = JSON.parse(cleaned);

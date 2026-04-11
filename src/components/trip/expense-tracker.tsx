@@ -21,13 +21,16 @@ const categoryConfig = {
 
 interface ExpenseTrackerProps {
   budget: number;
+  destinationId?: string;
 }
 
-export function ExpenseTracker({ budget }: ExpenseTrackerProps) {
+export function ExpenseTracker({ budget, destinationId }: ExpenseTrackerProps) {
+  const storageKey = `smartplan-expenses${destinationId ? `-${destinationId}` : ""}`;
+
   const [expenses, setExpenses] = useState<Expense[]>(() => {
     if (typeof window === "undefined") return [];
     try {
-      const saved = localStorage.getItem("smartplan-expenses");
+      const saved = localStorage.getItem(storageKey);
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
@@ -35,8 +38,8 @@ export function ExpenseTracker({ budget }: ExpenseTrackerProps) {
   });
 
   useEffect(() => {
-    localStorage.setItem("smartplan-expenses", JSON.stringify(expenses));
-  }, [expenses]);
+    localStorage.setItem(storageKey, JSON.stringify(expenses));
+  }, [expenses, storageKey]);
   const [showForm, setShowForm] = useState(false);
   const [newExpense, setNewExpense] = useState({
     title: "",

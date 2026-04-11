@@ -9,6 +9,7 @@ import type { User } from "@supabase/supabase-js";
 export function Navbar() {
   const [user, setUser] = useState<User | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -48,7 +49,7 @@ export function Navbar() {
         </Link>
 
         <div className="flex items-center gap-6">
-          {/* Public links — visible to everyone */}
+          {/* Public links — visible to everyone (hidden on mobile) */}
           <Link
             href="/compare"
             className="text-sm text-zinc-400 hover:text-white transition-colors hidden sm:block"
@@ -72,13 +73,13 @@ export function Navbar() {
             <>
               <Link
                 href="/dashboard"
-                className="text-sm text-zinc-400 hover:text-white transition-colors"
+                className="text-sm text-zinc-400 hover:text-white transition-colors hidden sm:block"
               >
                 Dashboard
               </Link>
               <Link
                 href="/groups"
-                className="text-sm text-zinc-400 hover:text-white transition-colors"
+                className="text-sm text-zinc-400 hover:text-white transition-colors hidden sm:block"
               >
                 Groups
               </Link>
@@ -96,13 +97,41 @@ export function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="px-5 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/25"
+              className="px-5 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/25 hidden sm:block"
             >
               Get Started
             </Link>
           )}
+
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="sm:hidden flex flex-col gap-1.5 p-2"
+            aria-label="Toggle menu"
+          >
+            <span className={`w-5 h-0.5 bg-zinc-400 transition-all ${mobileOpen ? "rotate-45 translate-y-2" : ""}`} />
+            <span className={`w-5 h-0.5 bg-zinc-400 transition-all ${mobileOpen ? "opacity-0" : ""}`} />
+            <span className={`w-5 h-0.5 bg-zinc-400 transition-all ${mobileOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+          </button>
         </div>
       </div>
+
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div className="sm:hidden bg-zinc-950/95 backdrop-blur-xl border-t border-zinc-800/50 px-6 py-4 space-y-3 animate-fade-in-up">
+          <Link href="/compare" onClick={() => setMobileOpen(false)} className="block text-sm text-zinc-300 hover:text-white py-2">Compare</Link>
+          <Link href="/quiz" onClick={() => setMobileOpen(false)} className="block text-sm text-zinc-300 hover:text-white py-2">Quiz</Link>
+          <Link href="/surprise" onClick={() => setMobileOpen(false)} className="block text-sm text-zinc-300 hover:text-white py-2">Surprise Me</Link>
+          {user ? (
+            <>
+              <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="block text-sm text-zinc-300 hover:text-white py-2">Dashboard</Link>
+              <Link href="/groups" onClick={() => setMobileOpen(false)} className="block text-sm text-zinc-300 hover:text-white py-2">Groups</Link>
+            </>
+          ) : (
+            <Link href="/login" onClick={() => setMobileOpen(false)} className="block text-sm text-indigo-400 hover:text-white py-2 font-medium">Get Started</Link>
+          )}
+        </div>
+      )}
     </nav>
   );
 }

@@ -104,7 +104,12 @@ export default function QuizPage() {
 
   const handleGoToDest = () => {
     if (!result) return;
-    router.push(`/explore/${result.id}?budget=${result.avg_daily_cost * 3}&duration=3&vibes=${result.vibes.slice(0, 2).join(",")}&travelers=1&region=${result.region}&diet=none`);
+    // Calculate sensible duration based on budget
+    const lastAnswer = answers[answers.length - 1];
+    const budgetOption = questions[questions.length - 1].options[lastAnswer];
+    const selectedBudget = "budget" in budgetOption ? (budgetOption.budget as number) : 15000;
+    const duration = Math.max(2, Math.min(10, Math.floor(selectedBudget / result.avg_daily_cost)));
+    router.push(`/explore/${result.id}?budget=${selectedBudget}&duration=${duration}&vibes=${result.vibes.slice(0, 2).join(",")}&travelers=1&region=${result.region}&diet=none`);
   };
 
   const handleRetry = () => {

@@ -23,9 +23,13 @@ export function ShareCard({
   const [showCard, setShowCard] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const shareText = `🗺️ I'm planning a trip to ${destination.name}!\n\n📍 ${destination.country}\n📅 ${duration} days\n💰 Budget: ${formatBudget(budget)}\n✨ Vibes: ${vibes.join(", ")}\n\nPlanned with SmartPlan — AI-powered travel planning\n${window.location.href}`;
+  const getShareText = () => {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    return `🗺️ I'm planning a trip to ${destination.name}!\n\n📍 ${destination.country}\n📅 ${duration} days\n💰 Budget: ${formatBudget(budget)}\n✨ Vibes: ${vibes.join(", ")}\n\nPlanned with SmartPlan — AI-powered travel planning\n${url}`;
+  };
 
   const handleShare = async () => {
+    const shareText = getShareText();
     if (navigator.share) {
       try {
         await navigator.share({
@@ -48,7 +52,7 @@ export function ShareCard({
   };
 
   const handleWhatsApp = () => {
-    const url = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+    const url = `https://wa.me/?text=${encodeURIComponent(getShareText())}`;
     window.open(url, "_blank");
   };
 
